@@ -27,7 +27,7 @@ class TestItController < ApplicationController
     chart.set_title(title)
     chart.add_element(bar)
     #    chart.set_colours('#000000','#FF00FF')
-    chart.set_bg_colour("#FF00FF")
+    chart.set_bg_colour("#FFFFFF")
     render :text => chart.to_s
   end
   
