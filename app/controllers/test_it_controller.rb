@@ -314,5 +314,11 @@ class TestItController < ApplicationController
 
     render :text => chart.to_s
   end
-  
+
+  def all_graphs
+    @graph_bar  = open_flash_chart_object(600,300,"/test_it/graph_code_bar")
+    @graph_line = open_flash_chart_object(600,300,"/test_it/graph_code_line")
+    @graph_pie  = open_flash_chart_object(600,300,"/test_it/graph_code_pie")
+    @graph_sl   = open_flash_chart_object(600,300,"/test_it/graph_code_scatterline")
+  end
 end
