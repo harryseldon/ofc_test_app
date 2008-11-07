@@ -1,5 +1,5 @@
 class TestItController < ApplicationController
-#  include OpenFlashChart
+  #  include OpenFlashChart
   
   def index
     respond_to do |wants|
@@ -14,11 +14,11 @@ class TestItController < ApplicationController
       }
     end
   end
-
+  
   def index_bar
     @graph = open_flash_chart_object(600,300,"/test_it/graph_code_bar")
   end
-
+  
   def graph_code_bar
     title = Title.new("MY TITLE")
     bar = BarGlass.new
@@ -261,7 +261,7 @@ class TestItController < ApplicationController
     chart = OpenFlashChart.new
     title = Title.new(Date.today.to_s)
     chart.set_title(title)
-
+    
     scatter_line = ScatterLine.new( '#FFD600', 3 )
     v = Array.new
     x = 0
@@ -280,45 +280,105 @@ class TestItController < ApplicationController
     end
     scatter_line.set_values(v)
     chart.add_element(scatter_line)
-
+    
     x_axis = XAxis.new
     x_axis.set_range(0,25)
     chart.x_axis = x_axis
-
+    
     y_axis = YAxis.new
     y_axis.set_range( -10, 10 )
     chart.y_axis = y_axis
     render :text => chart.to_s
   end
-
+  
   def index_pie
     @graph = open_flash_chart_object(600,300,"/test_it/graph_code_pie")
   end
-
+  
   def graph_code_pie
     # based on this example - http://teethgrinder.co.uk/open-flash-chart-2/pie-chart.php
     title = Title.new("Pie Chart Example For Chipster")
-
+    
     pie = Pie.new
     pie.start_angle = 35
     pie.animate = true
     pie.tooltip = '#val# of #total#<br>#percent# of 100%'
     pie.colours = ["#d01f3c", "#356aa0", "#C79810"]
     pie.values  = [2,3, PieValue.new(6.5,"Hello (6.5)")]
-
+    
     chart = OpenFlashChart.new
     chart.title = title
     chart.add_element(pie)
-
+    
     chart.x_axis = nil
-
+    
     render :text => chart.to_s
   end
-
+  
+  def index_radar
+    @graph = open_flash_chart_object(600,300,"/test_it/graph_code_radar")
+  end
+  
+  def graph_code_radar
+    # based on this example - http://teethgrinder.co.uk/open-flash-chart-2/radar-chart-lines.php
+    chart = OpenFlashChart.new
+    chart.set_title(Title.new('Radar Chart'))
+    line_1 = LineHollow.new
+    line_1.set_values(Array.new([3, 4, 5, 4, 3, 3, 2.5]))
+    line_1.set_halo_size( 2 )
+    line_1.set_width( 1 )
+    line_1.set_dot_size( 3 )
+    line_1.set_colour( '#FBB829' )
+    line_1.set_tooltip( "Gold<br>#val#" )
+    line_1.set_key( 'Mr Gold', 10 )
+    
+    line_2 = LineDot.new
+    line_2.set_values(Array.new([2, 2, 2, 2, 2, 2, 2]));
+    line_2.set_halo_size( 2 )
+    line_2.set_width( 1 )
+    line_2.set_dot_size( 3 )
+    line_2.set_colour( '#8000FF' )
+    line_2.set_tooltip( "Purple<br>#val#" )
+    line_2.set_key( 'Mr Purple', 10 )
+    line_2.loop()
+    
+    #// add the area object to the chart:
+    chart.add_element( line_1 )
+    chart.add_element( line_2 )
+    #    
+    r = RadarAxis.new( 5 )
+    
+    r.set_colour( '#DAD5E0' )
+    r.set_grid_colour( '#DAD5E0' )
+    labels = RadarAxisLabels.new(Array.new(['Zero','','','Middle','','High']))
+    labels.set_colour( '#9F819F' )
+    r.set_labels( labels )
+    
+    spoke_labels = RadarSpokeLabels.new(Array.new([
+        'Strength',
+        'Smarts',
+        'Sweet<br>Tooth',
+        'Armour',
+        'Max Hit Points',
+        '???',
+        'Looks Like a Monkey']))
+    
+    spoke_labels.set_colour( '#9F819F' )
+    r.set_spoke_labels( spoke_labels )
+    chart.set_radar_axis( r )
+    tooltip = Tooltip.new()
+    tooltip.set_proximity()
+    chart.set_tooltip( tooltip )
+    chart.set_bg_colour( '#ffffff' )
+    render :text => chart.to_s
+  end  
+  
+  
   def all_graphs
     @graph_bar  = open_flash_chart_object(600,300,"/test_it/graph_code_bar")
     @graph_line = open_flash_chart_object(600,300,"/test_it/graph_code_line")
     @graph_pie  = open_flash_chart_object(600,300,"/test_it/graph_code_pie")
     @graph_sl   = open_flash_chart_object(600,300,"/test_it/graph_code_scatterline")
+    @graph_radar= open_flash_chart_object(600,300,"/test_it/graph_code_radar")    
   end
 end
