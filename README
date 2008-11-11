@@ -1,11 +1,20 @@
 Both a testing and tutorial application for Rails Open Flash Chart Plugin.
 
-Version 0.2.0
+Version 0.2.1
 
 1) Install with: git clone git://github.com/harryseldon/ofc_test_app.git
 
-2) Run your server script/server -p 3000 --debugger
+2) Run your server script/server -p 3000
 
 3) Go to http://localhost:3000/test_it/all_graphs 
 You will see all the graphs.
+
+More info about this app:
+http://harryseldon.thinkosphere.com/2008/11/07/a-test-and-example-app-for-open-flash-chart-rails-plugin
+
+Live example:
+http://harryseldon.thinkosphere.com/test_it/all_graphs
+
+How to contribute to this app ?
+http://harryseldon.thinkosphere.com/2008/11/08/grand-gardening-with-git
 
