@@ -1,6 +1,7 @@
 Both a testing and tutorial application for Rails Open Flash Chart Plugin.
 
-Version 0.2.1
+Version 0.2.2
+Use OFC version with last commit on 12/09/2008
 
 1) Install with: git clone git://github.com/harryseldon/ofc_test_app.git
 
