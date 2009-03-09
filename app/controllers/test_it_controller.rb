@@ -7,8 +7,10 @@ class TestItController < ApplicationController
         @graph = open_flash_chart_object( 600, 300, url_for( :action => 'index', :format => :json ) )
       }
       wants.json { 
-        chart = OpenFlashChart.new( :title => Title.new("MY TITLE") ) do |c|
+        chart = OpenFlashChart.new do |c|
           c << BarGlass.new( :values => (1..10).sort_by{rand} )
+          title = Title.new("MY TITLE")
+          c.set_title(title)          
         end
         render :text => chart, :layout => false
       }
