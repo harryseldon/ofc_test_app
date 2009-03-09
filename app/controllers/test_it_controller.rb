@@ -373,12 +373,130 @@ class TestItController < ApplicationController
     render :text => chart.to_s
   end  
   
+  def index_radar_lines
+    # from http://ingiroingiro.blogspot.com/2008/12/radar-chart-lines.html 
+    @graph = open_flash_chart_object(600,300,"/test_it/graph_code_radar_lines")
+  end
+  
+  def graph_code_radar_lines
+    # based on this example - http://teethgrinder.co.uk/open-flash-chart-2/radar-chart-lines.php
+    chart = OpenFlashChart.new
+    chart.set_title(Title.new('Radar Chart'))
+    
+    values = [30,50,60,70,80,90,100,115,130,115,100,90,80,70,60,50]
+    spokes = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p']
+    vals = []
+    
+    values.each_with_index do |value, i|
+      tmp = DotValue.new( value, '#D41E47' )
+      tmp.set_tooltip("#val#&ltbr%rtSpoke: #{spokes[i]}")
+      vals.push(tmp)
+    end
+    
+    line = LineHollow.new()
+    line.set_values( vals )
+    line.set_halo_size( 0 )
+    line.set_width( 2 )
+    line.set_dot_size( 6 )
+    line.set_colour( '#FBB829' )
+    line.set_key( 'Hearts', 10 )
+    line.loop()
+    
+    
+    # add the area object to the chart:
+    chart.add_element(line)
+    
+    r = RadarAxis.new( 150 )
+    r.set_steps(10)
+    r.set_colour( '#DAD5E0' )
+    r.set_grid_colour( '#EFEFEF' )
+    chart.set_radar_axis( r )
+    
+    tooltip = Tooltip.new()
+    tooltip.set_proximity()
+    chart.set_tooltip( tooltip )
+    
+    chart.set_bg_colour( '#ffffff' )
+    
+    render :text => chart.to_s
+  end
+  
+  def index_line_band
+    # from http://ingiroingiro.blogspot.com/2008/12/grafico-con-banda-derrore.html 
+    @graph = open_flash_chart_object(600,300,"/test_it/graph_code_line_band")
+  end
+  
+  def graph_code_line_band    
+    title = Title.new("a Graph")
+    
+    chart = OpenFlashChart.new
+    chart.set_title(title)
+    
+    @data_up = [1]
+    @data_down = [-1]
+    
+    0.step(30, 1) {|i|
+      @data_up << @data_up[i] +rand - 0.5
+      @data_down << @data_down[i] + rand - 0.5
+    }
+    
+    def draw_quadri(i)
+      q = Shape.new( '#80B11A' )                        
+      q.append_value(ShapePoint.new(i,@data_up[i]))
+      q.append_value(ShapePoint.new(i,@data_down[i]))
+      q.append_value(ShapePoint.new(i+1,@data_down[i+1]))
+      q.append_value(ShapePoint.new(i+1,@data_up[i+1])) 
+      return q
+    end
+    
+    flux = []
+     (@data_up.length-1).times do |h|
+      flux << draw_quadri(h)
+    end
+    
+    flux.each do  |shape|
+      chart.add_element(shape)
+    end
+    
+    scatter_line = ScatterLine.new( '#FF0000', 5 )
+    scatter_line_u = ScatterLine.new( '#FF0000', 3 )
+    scatter_line_d = ScatterLine.new( '#FF0000', 3 )
+    data = []
+    data_u = []
+    data_d = []
+    
+    x=0
+     (@data_up.length).times do |h|
+      data   << (ScatterValue.new(x,(@data_up[h] + @data_down[h])/ 2))
+      data_u << (ScatterValue.new(x,@data_up[h]))
+      data_d << (ScatterValue.new(x,@data_down[h]))
+      x+=1
+    end
+    
+    scatter_line.set_values(data);         chart.add_element(scatter_line)
+    scatter_line_u.set_values(data_u);     chart.add_element(scatter_line_u)
+    scatter_line_d.set_values(data_d);     chart.add_element(scatter_line_d)
+    
+    x = XAxis.new
+    x.set_range(0,32,5)
+    x.set_offset(false)
+    chart.set_x_axis(x)
+    
+    y = YAxis.new
+    y.set_range(-5,5,1)
+    y.set_offset(true)
+    chart.set_y_axis(y)
+    
+    render :text => chart.to_s
+  end    
   
   def all_graphs
     @graph_bar  = open_flash_chart_object(600,300,"/test_it/graph_code_bar")
     @graph_line = open_flash_chart_object(600,300,"/test_it/graph_code_line")
     @graph_pie  = open_flash_chart_object(600,300,"/test_it/graph_code_pie")
     @graph_sl   = open_flash_chart_object(600,300,"/test_it/graph_code_scatterline")
-    @graph_radar= open_flash_chart_object(600,300,"/test_it/graph_code_radar")    
+    @graph_radar= open_flash_chart_object(600,300,"/test_it/graph_code_radar")
+    @graph_radar_lines = open_flash_chart_object(600,300,"/test_it/graph_code_radar_lines")
+    @graph_line_band  = open_flash_chart_object(600,300,"/test_it/graph_code_line_band")
   end
 end
