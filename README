@@ -1,9 +1,11 @@
 Both a testing and tutorial application for Rails Open Flash Chart Plugin.
 
-Version 0.2.2
+Version 0.2.3
 Use OFC version with last commit on 12/09/2008
 
-1) Install with: git clone git://github.com/harryseldon/ofc_test_app.git
+1) Install with: 
+git clone git://github.com/harryseldon/ofc_test_app.git
+git submodules update --init
 
 2) Run your server script/server -p 3000
 
@@ -14,7 +16,7 @@ More info about this app:
 http://harryseldon.thinkosphere.com/2008/11/07/a-test-and-example-app-for-open-flash-chart-rails-plugin
 
 Live example:
-http://harryseldon.thinkosphere.com/test_it/all_graphs
+http://charts.thinkosphere.com/test_it/all_graphs
 
 How to contribute to this app ?
 http://harryseldon.thinkosphere.com/2008/11/08/grand-gardening-with-git
