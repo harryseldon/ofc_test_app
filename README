@@ -13,6 +13,7 @@ git submodules update --init
 You will see all the graphs.
 
 More info about this app:
+http://harryseldon.thinkosphere.com/2009/03/09/open-flash-charts-examples-with-rails
 http://harryseldon.thinkosphere.com/2008/11/07/a-test-and-example-app-for-open-flash-chart-rails-plugin
 
 Live example:
