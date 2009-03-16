@@ -254,6 +254,25 @@ class TestItController < ApplicationController
   
   def index_js_4
   end
+
+  def tuto_5
+    #include '../php-ofc-library/open-flash-chart.php';
+    
+    title = Title.new("tuto_5")
+    #$title = new title( date("D M d Y") );
+    
+    #$chart = new open_flash_chart();
+    @chart = OpenFlashChart.new
+    
+    #$bar = new bar();
+    bar = BarGlass.new
+    #$bar->set_values( array(9,8,7,6,5,4,3,2,1) );
+    bar.set_values([1,2,3,4,5,6,7,8,9])
+    #$chart->set_title( $title );
+    @chart.set_title(title)
+    #$chart->add_element( $bar );
+    @chart.add_element(bar)        
+  end
   
   def index_scatterline
     @graph = open_flash_chart_object(600,300,"/test_it/graph_code_scatterline")
