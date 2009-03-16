@@ -1,0 +1,41 @@
+<head>
+
+<script type="text/javascript" src="/javascripts/json2.js"></script>
+<script type="text/javascript" src="/javascripts/swfobject.js"></script>
+
+</head>
+
+<body>
+<script type="text/javascript">
+swfobject.embedSWF("/open-flash-chart.swf", "my_chart", "350", "200", "9.0.0");
+</script>
+<script type="text/javascript">
+
+function ofc_ready()
+{
+    alert('ofc_ready');
+}
+
+function open_flash_chart_data()
+{
+    alert( 'reading data' );
+    return JSON.stringify(data);
+}
+
+function findSWF(movieName) {
+  if (navigator.appName.indexOf("Microsoft")!= -1) {
+    return window[movieName];
+  } else {
+    return document[movieName];
+  }
+}
+    
+var data = <%= @chart.to_s %>;
+</script>
+
+	
+<p>Hello World</p>
+
+<div id="my_chart"></div>
+     
+</body>
