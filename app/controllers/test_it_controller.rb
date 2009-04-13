@@ -25,6 +25,7 @@ class TestItController < ApplicationController
     title = Title.new("MY TITLE")
     bar = BarGlass.new
     bar.set_values([1,2,3,4,5,6,7,8,9])
+    bar.colour = '#000000'
     chart = OpenFlashChart.new
     chart.set_title(title)
     chart.add_element(bar)
@@ -254,7 +255,7 @@ class TestItController < ApplicationController
   
   def index_js_4
   end
-
+  
   def tuto_5
     #include '../php-ofc-library/open-flash-chart.php';
     
@@ -520,4 +521,310 @@ class TestItController < ApplicationController
     @graph_radar_lines = open_flash_chart_object(600,300,"/test_it/graph_code_radar_lines")
     @graph_line_band  = open_flash_chart_object(600,300,"/test_it/graph_code_line_band")
   end
+  
+  def index_mandelbrot_fractal
+    # from http://perso.numericable.fr/~haasjn/haasjn/AlgoMandel.txt 
+    @graph = open_flash_chart_object(500,500,"/test_it/graph_code_Mandelbrot_fractal")     
+  end
+  
+  def graph_code_Mandelbrot_fractal
+    #      Algorithme de la fractale de Mandelbrot
+    #    
+    #    variables a,b,x,y,xmin,ymax,cx,cy,largeur,step:reels
+    #              i,j,nx,ny,n:entiers
+    #        resultat: tableau [0..nx-1,0..ny-1] d'entiers
+    #        
+    #    cx,cy    coordonnées du centre de l'image dans le plan complexe
+    #    xmin     limite à gauche de l'image
+    #    ymax     limite supérieure de l'image
+    #    width  width de l'image dans le plan complexe
+    #    nx       résolution horizontale de l'image
+    #    ny       résolution verticale de l'image
+    #    nmax     nombre maximum de boucles à éxécuter sur la suite complexe
+    #    step    incrément dans le plan complexe entre 2 points
+    #    resultat tableau comportant le résultat de chaque point
+    #
+    #    dans la boucle
+    #    i,j  indices du point dans un tableau 2 dimensions
+    #    a,b  coordonnées du point
+    #    x,y  valeurs de la suite complexe
+    #    x1   variable relai de x
+    #    n    indice de la suite complexe
+    #      Début de l'algorithme
+    #    
+    #    cx,cy,width,nx,ny,nmax sont donnés au départ
+    cx = 0
+    cy = 0
+    #     xmin = -3
+    #     ymax = 3
+    width = 4.to_f
+    nx = 100.to_f
+    ny = 100.to_f
+    nmax = 250.to_f
+    
+    xmin = cx-width/2
+    ymax = cy+width/2*ny/nx
+    step  = width/nx
+    
+    chart = OpenFlashChart.new
+    title = Title.new("Mandelbrot set")
+    chart.set_title(title)
+    v = Array.new
+    r = Array.new
+    
+    for j in 0..ny-1
+      b=ymax-j*step       
+      for i in 0..nx-1
+        a=i*step+xmin
+        x=0
+        y=0 
+        n=0
+        while x*x+y*y<4 && n<=nmax
+          x1=x*x-y*y+a
+          y=2*x*y+b
+          x=x1
+          n=n+1
+          #          tant que x*x+y*y<4 et n<=nmax
+        end
+        #          resultat[i,j]=n
+        amplif = 1
+        c = (16.0.+n/nmax*(255.0-16.0)*amplif).to_int
+        c = [255,c].min
+        col_gray = (255-c).to_int.to_s(16).to_s
+        col =  "#"+col_gray+col_gray+col_gray
+        scatter = Scatter.new(col, 2);
+        scatter.set_values([ScatterValue.new(a,b)])
+        chart.add_element( scatter )
+        r.push([a,b,n,c])
+      end #i
+    end #j
+#    debugger
+    x_axis = XAxis.new
+    x_axis.set_range(xmin,-xmin)
+    chart.x_axis = x_axis
+    
+    y_axis = YAxis.new
+    y_axis.set_range( -ymax, ymax )
+    chart.y_axis = y_axis
+    render :text => chart.to_s      
+    #    à partir du tableau resultat[,], il faut associer à chaque point 
+    #    une couleur.
+    
+    
+    
+    #    scatter = Scatter.new( '#FFD600', 10 );
+    #    $scatter->set_values(
+    #        array(
+    #            new scatter_value( 0, 0 )
+    #            )
+    #        );
+    #    
+    #    $chart->add_element( $scatter );
+    
+    #    //
+    #    // plot a circle
+    #    //
+    #    $s2 = new scatter( '#D600FF', 3 );
+    #    $v = array();
+    #    
+    #    for( $i=0; $i<360; $i+=5 )
+    #    {
+    #        $v[] = new scatter_value(
+    #            number_format(sin(deg2rad($i)), 2, '.', ''),
+    #            number_format(cos(deg2rad($i)), 2, '.', '') );    
+    #    }
+    #    $s2->set_values( $v );
+    #    $chart->add_element( $s2 );
+    #    
+    #    $x = new x_axis();
+    #    $x->set_range( -2, 2 );
+    #    $chart->set_x_axis( $x );
+    #    
+    #    $y = new x_axis();
+    #    $y->set_range( -2, 2 );
+    #    $chart->add_y_axis( $y );
+    #    
+    #    
+    #    echo $chart->toPrettyString();      
+    
+    
+    #    scatter_line = ScatterLine.new( '#FFD600', 3 )
+    #    v = Array.new
+    #    x = 0
+    #    y = 0
+    #    while x < 25 
+    #      v.push(ScatterValue.new(x,y))
+    #      #    // move up or down in Y axis:
+    #      y += (-1+2*rand)*2
+    #      if y>10
+    #        y=10
+    #      end
+    #      if y<-10
+    #        y=-10
+    #      end
+    #      x += (5+10*rand)/10
+    #    end
+    #    scatter_line.set_values(v)
+    #    chart.add_element(scatter_line)
+    #    
+    #    x_axis = XAxis.new
+    #    x_axis.set_range(0,25)
+    #    chart.x_axis = x_axis
+    #    
+    #    y_axis = YAxis.new
+    #    y_axis.set_range( -10, 10 )
+    #    chart.y_axis = y_axis
+    #    render :text => chart.to_s  
+  end
+  
+  def index_scatter
+    @graph = open_flash_chart_object(600,300,"/test_it/graph_code_scatter")     
+  end
+  
+  def graph_code_scatter
+    chart = OpenFlashChart.new
+    title = Title.new("Scatter")
+    chart.set_title(title)
+    scatter = Scatter.new( '#FFD600', 10 );
+    scatter.set_values([ScatterValue.new( 0, 0 )]);
+    chart.add_element( scatter)
+
+    xmin = -3
+    ymax = 3
+    x_axis = XAxis.new
+    x_axis.set_range(xmin,-xmin)
+    chart.x_axis = x_axis
+    
+    y_axis = YAxis.new
+    y_axis.set_range( -ymax, ymax )
+    chart.y_axis = y_axis
+    render :text => chart.to_s         
+  end
+
+  def index_stacked_bar
+    @graph = open_flash_chart_object(600,300,"/test_it/graph_code_stacked_bar")     
+  end
+  
+  def graph_code_stacked_bar
+    title = Title.new("A stacked bar chart")
+    title.set_style( "{font-size: 20px; color: #F24062; text-align: center;}" );
+    bar_stack = BarStack.new
+    
+    # set_colours does not work
+    # set a cycle of 3 colours:
+#    colour_array =  Array.new( [ '#C4D318', '#50284A', '#7D7B6A'] )# yellow purple gray
+##    bar_stack.set_colour('#C4D318', '#50284A', '#7D7B6A');
+#    bar_stack.set_colour(colour_array);
+#    # add 3 bars:
+#    bar_stack.append_stack( Array.new( [2.5, 5, 2.5 ]) ); # 0
+#    # add 4 bars, the fourth will be the same colour as the first:
+#    bar_stack.append_stack( Array.new( [2.5, 5, 1.25, 1.25 ]) ); # 1 
+##    debugger
+#    bsv4 = BarStackValue.new(5, '#ff0000') #red
+#    bsv5 = BarStackValue.new(2, '#ff00ff') # 3 pink
+#   
+#    bar_stack.append_stack( Array.new( [5,bsv4] ) ); # 2 red 
+#    bar_stack.append_stack( Array.new( [2, 2, 2, 2,  bsv5]) ); # 3 pink 
+
+    # Using  BarStackValue to set the colour     
+    bsv1 = BarStackValue.new(2.5, '#C4D318') # yellow    
+    bsv2 = BarStackValue.new(5, '#50284A')   # purple
+    bsv3 = BarStackValue.new(1.25, '#7D7B6A') # gray
+    bsv31 = BarStackValue.new(1.25, '#C4D318') # yellow
+    bsv4 = BarStackValue.new(5, '#C4D318') # yellow
+    bsv41 = BarStackValue.new(5, '#ff0000') # red
+    bsv5 = BarStackValue.new(2, '#ff00ff') # pink    
+    bsv6 = BarStackValue.new(2, '#C4D318') # yellow
+    bsv7 = BarStackValue.new(2, '#50284A') # yellow
+    bsv8 = BarStackValue.new(2, '#7D7B6A')   # purple
+    
+    bar_stack.append_stack( Array.new( [bsv1, bsv2, bsv1 ]) ); # 0
+    bar_stack.append_stack( Array.new( [bsv1, bsv2, bsv3,bsv31 ]) ); # 0
+    bar_stack.append_stack( Array.new( [bsv4,bsv41] ) ); # 2 red 
+    bar_stack.append_stack( Array.new( [bsv6, bsv7, bsv8, bsv6,  bsv5]) ); # 3 pink 
+
+#   Does not work    
+#    bsk1 = BarStackKey.new( '#C4D318', 'Kiting', 13 )
+#    bsk2 = BarStackKey.new( '#50284A', 'Work', 13 )
+#    bsk3 = BarStackKey.new( '#7D7B6A', 'Drinking', 13 )
+#    bsk4 = BarStackKey.new( '#ff0000', 'XXX', 13 )
+#    bsk5 = BarStackKey.new( '#ff00ff', 'What rhymes with purple? Nurple?', 13 )
+#    
+#    bar_stack.set_keys(Array.new([bsk1, bsk2,bsk3,bsk4,bsk5]))
+##    bar_stack.set_keys(Array.new([bsk1, bsk2,bsk3,bsk4,bsk5]))
+    bar_stack.set_tooltip( 'X label [#x_label#], Value [#val#]<br>Total [#total#]' );
+
+    y = YAxis.new();
+    y.set_range( 0, 14, 2 );
+
+    x = XAxis.new();
+    x.set_labels_from_array( Array.new( ['Winter', 'Spring', 'Summer', 'Autmn' ]) );
+
+    tooltip = Tooltip.new;
+    tooltip.set_hover();
+
+    chart = OpenFlashChart.new
+    chart.set_title(title)
+    chart.add_element(bar_stack)
+    
+    chart.x_axis =  x ;
+    chart.y_axis =  y ;
+    chart.set_tooltip( tooltip );
+    
+    render :text => chart.to_s
+   
+#      <?php
+#
+#include_once '../php-ofc-library/open-flash-chart.php';
+#
+#$title = new title( 'Stuff I\'m thinking about, '.date("D M d Y") );
+#$title->set_style( "{font-size: 20px; color: #F24062; text-align: center;}" );
+#
+#$bar_stack = new bar_stack();
+#
+#// set a cycle of 3 colours:
+#$bar_stack->set_colours( array( '#C4D318', '#50284A', '#7D7B6A' ) );
+#
+#// add 3 bars:
+#$bar_stack->append_stack( array( 2.5, 5, 2.5 ) );
+#
+#// add 4 bars, the fourth will be the same colour as the first:
+#$bar_stack->append_stack( array( 2.5, 5, 1.25, 1.25 ) );
+#
+#
+#$bar_stack->append_stack( array( 5, new bar_stack_value(5, '#ff0000') ) );
+#$bar_stack->append_stack( array( 2, 2, 2, 2, new bar_stack_value(2, '#ff00ff') ) );
+#
+#$bar_stack->set_keys(
+#    array(
+#        new bar_stack_key( '#C4D318', 'Kiting', 13 ),
+#        new bar_stack_key( '#50284A', 'Work', 13 ),
+#        new bar_stack_key( '#7D7B6A', 'Drinking', 13 ),
+#        new bar_stack_key( '#ff0000', 'XXX', 13 ),
+#        new bar_stack_key( '#ff00ff', 'What rhymes with purple? Nurple?', 13 ),
+#        )
+#    );
+#$bar_stack->set_tooltip( 'X label [#x_label#], Value [#val#]<br>Total [#total#]' );
+#
+#
+#
+#$y = new y_axis();
+#$y->set_range( 0, 14, 2 );
+#
+#$x = new x_axis();
+#$x->set_labels_from_array( array( 'Winter', 'Spring', 'Summer', 'Autmn' ) );
+#
+#$tooltip = new tooltip();
+#$tooltip->set_hover();
+#
+#$chart = new open_flash_chart();
+#$chart->set_title( $title );
+#$chart->add_element( $bar_stack );
+#$chart->set_x_axis( $x );
+#$chart->add_y_axis( $y );
+#$chart->set_tooltip( $tooltip );
+#
+#echo $chart->toPrettyString();  
+    end
+
 end
