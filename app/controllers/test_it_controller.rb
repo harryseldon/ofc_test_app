@@ -528,23 +528,23 @@ class TestItController < ApplicationController
   end
   
   def graph_code_Mandelbrot_fractal
-    #      Algorithme de la fractale de Mandelbrot
+    #    Algorithm to draw Mandelbrot's fractal 
     #    
-    #    variables a,b,x,y,xmin,ymax,cx,cy,largeur,step:reels
+    #    variables a,b,x,y,xmin,ymax,cx,cy,width,step:reels
     #              i,j,nx,ny,n:entiers
     #        resultat: tableau [0..nx-1,0..ny-1] d'entiers
     #        
-    #    cx,cy    coordonnées du centre de l'image dans le plan complexe
-    #    xmin     limite à gauche de l'image
-    #    ymax     limite supérieure de l'image
-    #    width  width de l'image dans le plan complexe
-    #    nx       résolution horizontale de l'image
-    #    ny       résolution verticale de l'image
-    #    nmax     nombre maximum de boucles à éxécuter sur la suite complexe
-    #    step    incrément dans le plan complexe entre 2 points
+    #    cx,cy    coordinates of the image center in the complex plane
+    #    xmin     image left limit 
+    #    ymax     image upper limit
+    #    width    image width in the complex plane
+    #    nx       image horizontal resolution 
+    #    ny       image vertical resolution
+    #    nmax     maximum number of loops to compute the convergence of the complex sequence
+    #    step     step between 2 points 
     #    resultat tableau comportant le résultat de chaque point
     #
-    #    dans la boucle
+    #    in the loop 
     #    i,j  indices du point dans un tableau 2 dimensions
     #    a,b  coordonnées du point
     #    x,y  valeurs de la suite complexe
@@ -555,8 +555,6 @@ class TestItController < ApplicationController
     #    cx,cy,width,nx,ny,nmax sont donnés au départ
     cx = 0
     cy = 0
-    #     xmin = -3
-    #     ymax = 3
     width = 4.to_f
     nx = 100.to_f
     ny = 100.to_f
@@ -566,12 +564,15 @@ class TestItController < ApplicationController
     ymax = cy+width/2*ny/nx
     step  = width/nx
     
+    # Preparation of the chart
     chart = OpenFlashChart.new
     title = Title.new("Mandelbrot set")
     chart.set_title(title)
     v = Array.new
     r = Array.new
     
+    # The loop asks : does the point (a,b) belong to the Mandelbrot set ? 
+    # The bigger n, the more probable the point belongs to  the set 
     for j in 0..ny-1
       b=ymax-j*step       
       for i in 0..nx-1
@@ -579,14 +580,17 @@ class TestItController < ApplicationController
         x=0
         y=0 
         n=0
+        #  while x*x+y*y<4 and n<=nmax
         while x*x+y*y<4 && n<=nmax
           x1=x*x-y*y+a
           y=2*x*y+b
           x=x1
           n=n+1
-          #          tant que x*x+y*y<4 et n<=nmax
         end
-        #          resultat[i,j]=n
+        
+        # Adding the point to the chart
+        # Needs to associate a color according to n 
+        # that is according to the time needed to converge
         amplif = 1
         c = (16.0.+n/nmax*(255.0-16.0)*amplif).to_int
         c = [255,c].min
@@ -595,86 +599,20 @@ class TestItController < ApplicationController
         scatter = Scatter.new(col, 2);
         scatter.set_values([ScatterValue.new(a,b)])
         chart.add_element( scatter )
+        
+        # if you want to store the result 
         r.push([a,b,n,c])
       end #i
     end #j
-#    debugger
+
     x_axis = XAxis.new
     x_axis.set_range(xmin,-xmin)
     chart.x_axis = x_axis
-    
+   
     y_axis = YAxis.new
     y_axis.set_range( -ymax, ymax )
     chart.y_axis = y_axis
     render :text => chart.to_s      
-    #    à partir du tableau resultat[,], il faut associer à chaque point 
-    #    une couleur.
-    
-    
-    
-    #    scatter = Scatter.new( '#FFD600', 10 );
-    #    $scatter->set_values(
-    #        array(
-    #            new scatter_value( 0, 0 )
-    #            )
-    #        );
-    #    
-    #    $chart->add_element( $scatter );
-    
-    #    //
-    #    // plot a circle
-    #    //
-    #    $s2 = new scatter( '#D600FF', 3 );
-    #    $v = array();
-    #    
-    #    for( $i=0; $i<360; $i+=5 )
-    #    {
-    #        $v[] = new scatter_value(
-    #            number_format(sin(deg2rad($i)), 2, '.', ''),
-    #            number_format(cos(deg2rad($i)), 2, '.', '') );    
-    #    }
-    #    $s2->set_values( $v );
-    #    $chart->add_element( $s2 );
-    #    
-    #    $x = new x_axis();
-    #    $x->set_range( -2, 2 );
-    #    $chart->set_x_axis( $x );
-    #    
-    #    $y = new x_axis();
-    #    $y->set_range( -2, 2 );
-    #    $chart->add_y_axis( $y );
-    #    
-    #    
-    #    echo $chart->toPrettyString();      
-    
-    
-    #    scatter_line = ScatterLine.new( '#FFD600', 3 )
-    #    v = Array.new
-    #    x = 0
-    #    y = 0
-    #    while x < 25 
-    #      v.push(ScatterValue.new(x,y))
-    #      #    // move up or down in Y axis:
-    #      y += (-1+2*rand)*2
-    #      if y>10
-    #        y=10
-    #      end
-    #      if y<-10
-    #        y=-10
-    #      end
-    #      x += (5+10*rand)/10
-    #    end
-    #    scatter_line.set_values(v)
-    #    chart.add_element(scatter_line)
-    #    
-    #    x_axis = XAxis.new
-    #    x_axis.set_range(0,25)
-    #    chart.x_axis = x_axis
-    #    
-    #    y_axis = YAxis.new
-    #    y_axis.set_range( -10, 10 )
-    #    chart.y_axis = y_axis
-    #    render :text => chart.to_s  
   end
   
   def index_scatter
